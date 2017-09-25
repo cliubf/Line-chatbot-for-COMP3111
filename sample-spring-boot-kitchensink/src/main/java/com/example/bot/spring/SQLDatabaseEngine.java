@@ -11,9 +11,37 @@ import java.net.URI;
 public class SQLDatabaseEngine extends DatabaseEngine {
 	@Override
 	String search(String text) throws Exception {
-		//Write your code here
-		return null;
-	}
+		String result = null;		
+		try {
+			Connection con = getConnection();
+			PreparedStatement stmt = con.prepareStatement("SELECT keyword, response, hit FROM chatting;");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String name = rs.getString(1);			
+				if(text.toLowerCase().contains(name.toLowerCase())){
+					result = rs.getString(2);
+					int num = rs.getInt(3); num++;
+					
+					String query = "UPDATE chatting SET hit = ? where keyword = ?;";
+				    PreparedStatement hitschange = con.prepareStatement(query);
+				    hitschange.setInt(1,num);
+				    hitschange.setString(2,name); 
+				    hitschange.executeUpdate();
+				    result = result + " hits: "+num;
+				    hitschange.close();															
+					break;					
+				}	
+			}
+			rs.close();
+			stmt.close();
+			con.close();
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+		if (result != null)
+			return result;
+		throw new Exception("NOT FOUND");		
+	}		
 	
 	
 	private Connection getConnection() throws URISyntaxException, SQLException {
