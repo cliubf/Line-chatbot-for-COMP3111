@@ -50,7 +50,7 @@ import com.example.bot.spring.DatabaseEngine;
 @SpringBootTest(classes = { KitchenSinkTester.class, SQLDatabaseEngine.class })
 public class KitchenSinkTester {
 	@Autowired
-	private DatabaseEngine databaseEngine;
+	private SQLDatabaseEngine databaseEngine;
 	
 	@Test
 	public void testNotFound() throws Exception {
@@ -60,7 +60,7 @@ public class KitchenSinkTester {
 		} catch (Exception e) {
 			thrown = true;
 		}
-		assertThat(thrown);
+		assertThat(thrown).isEqualTo(true);
 	}
 	
 	@Test
@@ -68,12 +68,14 @@ public class KitchenSinkTester {
 		boolean thrown = false;
 		String result = null;
 		try {
-			result = this.databaseEngine.search("hku");
+			result = this.databaseEngine.search("ust");
 		} catch (Exception e) {
 			thrown = true;
 		}
-		assertThat(!thrown);
-		assertThat(result.equals("holidays"));
+		//System.err.println("the result is: "+result);
+		assertThat(!thrown).isEqualTo(true);
+		//assertThat(result.equals("holidays"));
+		assertThat(result.contains("bad grade")).isEqualTo(true);
 	}
 	
 	@Test
@@ -85,7 +87,7 @@ public class KitchenSinkTester {
 		} catch (Exception e) {
 			thrown = true;
 		}
-		assertThat(!thrown);
-		assertThat(result.equals("holidays"));
+		assertThat(!thrown).isEqualTo(true);
+		assertThat(result.contains("holidays")).isEqualTo(true);
 	}
 }
